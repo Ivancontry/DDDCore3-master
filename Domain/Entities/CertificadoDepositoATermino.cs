@@ -5,59 +5,67 @@ using System.Text;
 
 namespace Domain.Entities
 {
-    public class CertificadoDepositoATermino : CuentaBancaria
+    public class CertificadoDepositoATermino : ServicioFinanciero
     {
-        const double VALORCONSIGNACIONINICIAL = 1000000;
-        public bool PrimeraConsignacion { get; set; }
-        public float TasaEfectivaAnual { get; set; }
+        const double VALORCONSIGNACIONINICIAL = 1000000;       
+        public double TasaEfectivaAnual { get; set; }
         public DateTime FechaDeCreacion { get; set; }
         public int TerminoDefinido {get;set;}
-               
-        public override string ValidarConsignaccion(double valor, string ciudad) {
-            if (PrimeraConsignacion)
-            {
-                if (valor >= 1000000)
-                {
-                    this.Consignar(valor, ciudad);
-                }
-                else {
-                    return "El valor minimo de conssignar es de 1000000";
-                }
-            }
-            else {
-               return "No es posible realizar dos consignaciones";
-            }
 
-            return "Su nuevo saldo es " + this.Saldo + " m/c";
+        public override string Consignar(double valor, string ciudad)
+        {
+            if (CanConsignar(valor, ciudad).Count > 0) { throw new InvalidOperationException(); }
+            return base.Consignar(valor, ciudad);
+        }
+        public override IList<string> CanConsignar(double valor, string ciudad) {
+            var errors = new List<string>();
+            if (valor <= 0)
+            {
+                errors.Add("El valor a consignar es incorrecto");
+            }
+            else { 
+            
+                if (this.Movimientos.Count == 0)
+                {
+                    if (valor < VALORCONSIGNACIONINICIAL)
+                    {
+                        errors.Add("El valor minimo de consignar es de 1000000");
+                    }
+                }else
+                {
+
+                    errors.Add("No es posible realizar dos consignaciones");
+                }
+            }
+            return errors;
+        }
+        public override string EjecutarRetiro(double valor, string ciudad)
+        {
+            if (CanRetirar(valor).Count != 0) { throw new InvalidCastException(); }
+            return this.Retirar(valor, ciudad);
 
         }
-        public override string ValidarRetiro(double valor, string ciudad) {
-
+        public override IList<string> CanRetirar(double valor) {
+            var errors = new List<string>();
             TimeSpan time = DateTime.Now - FechaDeCreacion;
             int diasTrascurridos = time.Days;
-            if (diasTrascurridos >= TerminoDefinido)
+
+            if (valor <= 0)
             {
-                this.Retirar(valor, ciudad);
+                errors.Add("El valor a consignar es incorrecto");
+                if (diasTrascurridos < TerminoDefinido)
+                {
+                    errors.Add("No es posible realizar retiros a la fecha actual, termino de plazo no cumplido");
+                    if (valor > this.Saldo) {
+                        errors.Add("No es posible realizar el Retiro, supera el valor del saldo de la cuenta");
+                    }
+                }
             }
-            else
-            {
-                return "No es posible realizar retiros a la fecha actual, termino de plazo no cumplido";
-            }
-            return "Su nuevo saldo es " + this.Saldo + " m/c";
+            return errors;
 
         }
 
 
     }
-
-    [Serializable]
-    public class CertificadoDepositosATerminoException : Exception
-    {
-        public CertificadoDepositosATerminoException() { }
-        public CertificadoDepositosATerminoException(string message) : base(message) { }
-        public CertificadoDepositosATerminoException(string message, Exception inner) : base(message, inner) { }
-        protected CertificadoDepositosATerminoException(
-          System.Runtime.Serialization.SerializationInfo info,
-          System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
-    }
+  
 }

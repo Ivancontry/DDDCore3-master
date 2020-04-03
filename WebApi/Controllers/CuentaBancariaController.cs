@@ -9,7 +9,7 @@ using Infrastructure.Base;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
+//https://localhost:44325/swagger/index.html
 namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
@@ -37,6 +37,7 @@ namespace WebApi.Controllers
         [HttpPost("consignacion")]
         public ActionResult<ConsignarResponse> Post(ConsignarRequest request)
         {
+
             var _service = new ConsignarService(new UnitOfWork(_context));
             var response = _service.Ejecutar(request);
             return Ok(response);

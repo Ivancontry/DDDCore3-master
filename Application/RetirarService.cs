@@ -18,7 +18,11 @@ namespace Application
             var cuenta = _unitOfWork.CuentaBancariaRepository.FindFirstOrDefault(t => t.Numero == request.NumeroCuenta);
             if (cuenta != null)
             {
-                cuenta.Retirar(request.Valor);
+                var errors = cuenta.CanConsignar(request.Valor, request.Ciudad);
+                if (errors.Count == 0)
+                { 
+                    cuenta.EjecutarRetiro(request.Valor, request.Ciudad);                
+                }
                 _unitOfWork.Commit();
                 return new RetirarResponse() { Mensaje = $"Su Nuevo saldo es {cuenta.Saldo}." };
             }
@@ -32,6 +36,7 @@ namespace Application
     {
         public string NumeroCuenta { get; set; }
         public double Valor { get; set; }
+        public string Ciudad { get; set; }
     }
     public class RetirarResponse
     {

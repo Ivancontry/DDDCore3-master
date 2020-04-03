@@ -2,6 +2,7 @@
 using Domain.Entities;
 using Domain.Repositories;
 using System;
+using System.Collections.Generic;
 
 namespace Application
 {
@@ -18,7 +19,11 @@ namespace Application
             var cuenta = _unitOfWork.CuentaBancariaRepository.FindFirstOrDefault(t => t.Numero==request.NumeroCuenta);
             if (cuenta != null)
             {
-                cuenta.ValidarConsignaccion(request.Valor, request.Ciudad);
+                
+                var errors = cuenta.CanConsignar(request.Valor,request.Ciudad);
+                if (errors.Count == 0) {
+                    cuenta.Consignar(request.Valor, request.Ciudad);
+                }
                 _unitOfWork.Commit();
                 return new ConsignarResponse() { Mensaje = $"Su Nuevo saldo es {cuenta.Saldo}." };
             }

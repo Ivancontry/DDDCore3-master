@@ -11,9 +11,9 @@ namespace Domain.Entities
         string Numero { get; set; }
         double Saldo { get; }
 
-        void Consignar(double valor, string ciudad);
-        void Retirar(double valor, string ciudad);
-        void Trasladar(IServicioFinanciero servicioFinanciero, double valor, string ciudad);
+        string Consignar(double valor, string ciudad);
+        string Retirar(double valor, string ciudad);
+        string Trasladar(IServicioFinanciero servicioFinanciero, double valor, string ciudad);
 
     }
 }
