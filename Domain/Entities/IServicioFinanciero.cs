@@ -9,11 +9,11 @@ namespace Domain.Entities
 
         string Nombre { get; set; }
         string Numero { get; set; }
-        double Saldo { get; }
+        decimal Saldo { get; }
 
-        string Consignar(double valor, string ciudad);
-        string Retirar(double valor, string ciudad);
-        string Trasladar(IServicioFinanciero servicioFinanciero, double valor, string ciudad);
+        string Consignar(decimal valor, string ciudad);
+        string Retirar(decimal valor, string ciudad);
+        string Trasladar(IServicioFinanciero servicioFinanciero, decimal valor, string ciudad);
 
     }
 }

@@ -3,7 +3,7 @@ using NUnit.Framework;
 
 namespace Domain.Test
 {
-    public class CuentaBancariaCorrienteTests
+    public class CuentaCorrienteTests
     {
         [SetUp]
         public void Setup()
@@ -12,7 +12,7 @@ namespace Domain.Test
 
         
         [Test]
-        public void ConsignacionTest()
+        public void ConsignacionInicialNegativaTest()
         {
 
             var cuentaCorriente = new CuentaCorriente();
@@ -25,11 +25,11 @@ namespace Domain.Test
             string obtenido = "";
             string esperado = "El valor a consignar es incorrecto";
             if (respuesta.Contains(esperado)) obtenido = esperado;
-            Assert.AreEqual("El valor a consignar es incorrecto", respuesta);
+            Assert.AreEqual("El valor a consignar es incorrecto", obtenido);
         }
 
         [Test]
-        public void ConsignacionInicialCorrecta()
+        public void ConsignacionInicialCorrectaCorriente()
         {
             var cuentaCorriente = new CuentaCorriente();
             cuentaCorriente.Numero = "00001";
@@ -44,7 +44,7 @@ namespace Domain.Test
 
         [Test]
 
-        public void ConsignacionInicialIncorrecta()
+        public void ConsignacionInicialIncorrectaCorriente()
         {
             var cuentaCorriente = new CuentaCorriente();
             cuentaCorriente.Numero = "111";
@@ -54,27 +54,29 @@ namespace Domain.Test
             cuentaCorriente.TopeGiro = 5000000;
             var respuesta = cuentaCorriente.CanConsignar(40000, "Valledupar");
             string obtenido = "";
-            string esperado = "El valor a consignar es incorrecto";
+            string esperado = "El valor mínimo de la primera consignación debe ser de $100.000 mil pesos. Su nuevo saldo es $0 pesos";
             if (respuesta.Contains(esperado)) obtenido = esperado;
-            Assert.AreEqual("El valor mínimo de la primera consignación debe ser de $100.000 mil pesos. Su nuevo saldo es $0 pesos", obtenido);
+            Assert.AreEqual(esperado, obtenido);
         }
 
         [Test]
 
-        public void ConsignacionPosteriorInicialCorrecta()
+        public void ConsignacionPosteriorInicialCorrectaCorriente()
         {
             var cuentaCorriente = new CuentaCorriente();
             cuentaCorriente.Numero = "111";
             cuentaCorriente.Nombre = "Corriente Ejemplo";
             cuentaCorriente.CiudadDeCreacion = "Valledupar";
-            cuentaCorriente.Saldo = 30000;
+            cuentaCorriente.Saldo = 0;
             cuentaCorriente.TopeGiro = 5000000;
+            cuentaCorriente.Consignar(100000, "Valledupar");
+            
             var respuesta = cuentaCorriente.Consignar(49950, "Valledupar");
-            Assert.AreEqual("Su nuevo saldo es " + 79950 + " m/c", respuesta);
+            Assert.AreEqual("Su nuevo saldo es " + 149950 + " m/c", respuesta);
         }
 
         [Test]
-        public void ValorRetirarNegativoCorriente()
+        public void ValorRetirarNegativoCuentaCorriente()
         {
             var cuentaCorriente = new CuentaCorriente();
             cuentaCorriente.Numero = "111";
@@ -86,45 +88,48 @@ namespace Domain.Test
             string obtenido = "";
             string esperado = "El valor a consignar es incorrecto";
             if (respuesta.Contains(esperado)) obtenido = esperado;
-            Assert.AreEqual("El valor a consignar es incorrecto", obtenido);
+            Assert.AreEqual(esperado, obtenido);
         }
 
         [Test]
-        public void ValorCorrectoRetirarCorriente()
+        public void ValorCorrectoRetirarCuentaCorriente()
         {
+            decimal valor = 18800.000m;
             var cuentaCorriente = new CuentaCorriente();
             cuentaCorriente.Numero = "111";
             cuentaCorriente.Nombre = "Ahorro Ejemplo";
             cuentaCorriente.CiudadDeCreacion = "Valledupar";
-            cuentaCorriente.Saldo = 300000;
+            cuentaCorriente.Saldo = 320000;
             cuentaCorriente.TopeGiro = 5000000;
-            var respuesta = cuentaCorriente.EjecutarRetiro(300000, "Valledupar");
-            Assert.AreEqual("Su nuevo saldo es " + 0 + " m/c" + "Su sobregiro actual es " + 0, respuesta);
+            var respuesta = cuentaCorriente.Retirar(300000, "Valledupar");
+            Assert.AreEqual("Su nuevo saldo es " + valor + " m/c", respuesta);
         }
         [Test]
         public void ValorCorrectoRetirarUsandoSobregiroMenor()
         {
+            decimal valor = -202000.000m;
             var cuentaCorriente = new CuentaCorriente();
             cuentaCorriente.Numero = "111";
             cuentaCorriente.Nombre = "Ahorro Ejemplo";
             cuentaCorriente.CiudadDeCreacion = "Valledupar";
             cuentaCorriente.Saldo = 300000;
             cuentaCorriente.TopeGiro = 5000000;
-            var respuesta = cuentaCorriente.EjecutarRetiro(500000, "Valledupar");
-            Assert.AreEqual("Su nuevo saldo es " + 0 + " m/c", respuesta);
+            var respuesta = cuentaCorriente.Retirar(500000, "Valledupar");
+            Assert.AreEqual("Su nuevo saldo es " + valor + " m/c", respuesta);
         }
 
         [Test]
         public void ValorCorrectoRetirarUsandoSobregiroMayor()
         {
+            decimal valor = -202000.000m;
             var cuentaCorriente = new CuentaCorriente();
             cuentaCorriente.Numero = "111";
             cuentaCorriente.Nombre = "Ahorro Ejemplo";
             cuentaCorriente.CiudadDeCreacion = "Valledupar";
             cuentaCorriente.Saldo = 300000;
             cuentaCorriente.TopeGiro = 5000000;
-            var respuesta = cuentaCorriente.EjecutarRetiro(500000, "Valledupar");
-            Assert.AreEqual("Su nuevo saldo es " + 0 + " m/c", respuesta);
+            var respuesta = cuentaCorriente.Retirar(500000, "Valledupar");
+            Assert.AreEqual("Su nuevo saldo es " + valor + " m/c", respuesta);
         }
     }
 }

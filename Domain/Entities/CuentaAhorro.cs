@@ -6,15 +6,15 @@ namespace Domain.Entities
 {
     public class CuentaAhorro : ServicioFinanciero
     {
-        public const double TOPERETIRO = 1000;
-        public const double VALORDECUENTAPARARETIRAR = 20000;
-        public const double VALORDELCUARTORETIROENADELANTE = 5000;
-        public const double VALORCONSIGNACIONAOTRACIUDAD = 10000;
-        public const double VALORCONSIGNACIONINICIAL = 50000;
+        public const decimal TOPERETIRO = 1000;
+        public const decimal VALORDECUENTAPARARETIRAR = 20000;
+        public const decimal VALORDELCUARTORETIROENADELANTE = 5000;
+        public const decimal VALORCONSIGNACIONAOTRACIUDAD = 10000;
+        public const decimal VALORCONSIGNACIONINICIAL = 50000;
         public const int NUMERODERETIROSCONDESCUENTO = 4;
 
        
-        public override IList<string> CanConsignar(double valor, string ciudad)
+        public override IList<string> CanConsignar(decimal valor, string ciudad)
         {
             var errors = new List<string>();
             if (valor < 0)
@@ -34,7 +34,7 @@ namespace Domain.Entities
         }
 //en el padre, ok, no sabia,
 
-        public override string Consignar(double valor, string ciudad) {
+        public override string Consignar(decimal valor, string ciudad) {
             if (CanConsignar(valor,ciudad).Count > 0) { throw new InvalidOperationException(); }
 
             if (!ciudad.Equals(this.CiudadDeCreacion)) { valor -= VALORCONSIGNACIONAOTRACIUDAD;}
@@ -42,14 +42,14 @@ namespace Domain.Entities
         
         }
 
-        public override string EjecutarRetiro(double valor, string ciudad)
+        public override string Retirar(decimal valor, string ciudad)
         {
             if (this.NumeroDeRetiros() >= 4){valor += VALORDELCUARTORETIROENADELANTE;}
             
-            return this.Retirar(valor, ciudad);
+            return base.Retirar(valor, ciudad);
             
         }
-        public override IList<string> CanRetirar(double valor)
+        public override IList<string> CanRetirar(decimal valor)
         {
             var errors = new List<string>();
             if (valor < 0)

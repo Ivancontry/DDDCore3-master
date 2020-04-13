@@ -15,13 +15,13 @@ namespace Application
         }
         public RetirarResponse Ejecutar(RetirarRequest request)
         {
-            var cuenta = _unitOfWork.CuentaBancariaRepository.FindFirstOrDefault(t => t.Numero == request.NumeroCuenta);
+            var cuenta = _unitOfWork.ServicioFinancieroRepository.FindFirstOrDefault(t => t.Numero == request.NumeroCuenta);
             if (cuenta != null)
             {
                 var errors = cuenta.CanConsignar(request.Valor, request.Ciudad);
                 if (errors.Count == 0)
                 { 
-                    cuenta.EjecutarRetiro(request.Valor, request.Ciudad);                
+                    cuenta.Consignar(request.Valor, request.Ciudad);                
                 }
                 _unitOfWork.Commit();
                 return new RetirarResponse() { Mensaje = $"Su Nuevo saldo es {cuenta.Saldo}." };
@@ -35,7 +35,7 @@ namespace Application
     public class RetirarRequest
     {
         public string NumeroCuenta { get; set; }
-        public double Valor { get; set; }
+        public decimal Valor { get; set; }
         public string Ciudad { get; set; }
     }
     public class RetirarResponse

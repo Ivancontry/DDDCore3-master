@@ -20,7 +20,7 @@ namespace Domain.Test
             certificadoDepositoATermino.Nombre = "Ahorro Ejemplo";
             certificadoDepositoATermino.CiudadDeCreacion = "Valledupar";
             certificadoDepositoATermino.Saldo = 0;
-            certificadoDepositoATermino.TasaEfectivaAnual = 0.05;
+            certificadoDepositoATermino.TasaEfectivaAnual = 0.05m;
             certificadoDepositoATermino.TerminoDefinido = 60;
             var respuesta = certificadoDepositoATermino.CanConsignar(-10000, "Valledupar");
             string obtenido = "";

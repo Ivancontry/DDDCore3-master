@@ -15,7 +15,8 @@ namespace Infrastructure
         }
         public DbSet<CuentaAhorro> CuentasAhorro { get; set; }
         public DbSet<CuentaCorriente> CuentasCorriente { get; set; }
-
+        public DbSet<CertificadoDepositoATermino> CertificadoDepositoATerminos { get; set; }
+        public DbSet<MovimientoFinanciero> MovimientoFinancieros { get; set; }
 
     }
 }

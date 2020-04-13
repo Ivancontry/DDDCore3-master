@@ -15,21 +15,11 @@ namespace Domain.Entities
         public List<MovimientoFinanciero> Movimientos { get; set; }
         public string Nombre { get; set; }
         public string Numero { get; set; }
-        public double Saldo { get; set; }
+        public decimal Saldo { get; set; }
         public string CiudadDeCreacion { get; set; }
-        public double TopeGiro
-        {
-            get
-            {
-                return TopeGiro;
-            }
-
-            set
-            {
-                TopeGiro = value * -1;
-            }
-        }
-        public virtual string Consignar(double valor, string ciudad)
+        public DateTime FechaCreacion { get; set; }
+       
+        public virtual string Consignar(decimal valor, string ciudad)
         {           
             MovimientoFinanciero movimiento = new MovimientoFinanciero();
             movimiento.ValorConsignacion = valor;
@@ -40,10 +30,10 @@ namespace Domain.Entities
             return "Su nuevo saldo es " + this.Saldo + " m/c";
         }
 
-        public abstract IList<string> CanConsignar(double valor, string ciudad);
+        public abstract IList<string> CanConsignar(decimal valor, string ciudad);
         //public abstract string EjecutarConsignacion(double valor, string ciudad);
 
-        public virtual string Retirar(double valor, string ciudad) {
+        public virtual string Retirar(decimal valor, string ciudad) {
            
                 MovimientoFinanciero retiro = new MovimientoFinanciero();
                 retiro.ValorRetiro = valor;
@@ -54,15 +44,15 @@ namespace Domain.Entities
             return "Su nuevo saldo es " + this.Saldo + " m/c";
 
         }
-        public abstract IList<string> CanRetirar(double valor);
-        public abstract string EjecutarRetiro(double valor, string ciudad);
+        public abstract IList<string> CanRetirar(decimal valor);
+    
 
         public override string ToString()
         {
             return ($"Su saldo disponible es {Saldo}.");
         }
 
-        public void Trasladar(IServicioFinanciero servicioFinanciero, double valor, string ciudad)
+        public void Trasladar(IServicioFinanciero servicioFinanciero, decimal valor, string ciudad)
         {
             Retirar(valor, ciudad);
             servicioFinanciero.Consignar(valor, ciudad);
@@ -70,10 +60,11 @@ namespace Domain.Entities
 
         public int NumeroDeRetiros() {
            DateTime fechaActual = DateTime.Now;            
-           return Movimientos.FindAll(x => x.FechaMovimiento.Year == fechaActual.Year && x.FechaMovimiento.Month==fechaActual.Month && x.ValorConsignacion!=0 ).Count;
+           return Movimientos.FindAll(x => x.FechaMovimiento.Year == fechaActual.Year && x.FechaMovimiento.Month==fechaActual.Month && x.ValorRetiro!=0 ).Count;
+            
         }
 
-        string IServicioFinanciero.Trasladar(IServicioFinanciero servicioFinanciero, double valor, string ciudad)
+        string IServicioFinanciero.Trasladar(IServicioFinanciero servicioFinanciero, decimal valor, string ciudad)
         {
             this.Retirar(valor,ciudad);
             this.Consignar(valor,ciudad);

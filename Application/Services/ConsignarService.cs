@@ -16,7 +16,7 @@ namespace Application
         }
         public ConsignarResponse Ejecutar(ConsignarRequest request)
         {
-            var cuenta = _unitOfWork.CuentaBancariaRepository.FindFirstOrDefault(t => t.Numero==request.NumeroCuenta);
+            var cuenta = _unitOfWork.ServicioFinancieroRepository.FindFirstOrDefault(t => t.Numero==request.NumeroCuenta);
             if (cuenta != null)
             {
                 
@@ -36,7 +36,7 @@ namespace Application
     public class ConsignarRequest
     {
         public string NumeroCuenta { get; set; }
-        public double Valor { get; set; }
+        public decimal Valor { get; set; }
         public string Ciudad { get; set; }
     }
     public class ConsignarResponse

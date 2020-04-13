@@ -8,8 +8,8 @@ namespace Domain.Entities
     public class MovimientoFinanciero : Entity<int>
     {
         public ServicioFinanciero CuentaBancaria { get; set; }
-        public double ValorRetiro { get; set; }
-        public double ValorConsignacion { get; set; }
+        public decimal ValorRetiro { get; set; }
+        public decimal ValorConsignacion { get; set; }
         public DateTime FechaMovimiento { get; set; }
         public string CiudadDeRealizacion { get; set; }
     }

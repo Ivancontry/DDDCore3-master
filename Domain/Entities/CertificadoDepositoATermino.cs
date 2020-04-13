@@ -7,17 +7,17 @@ namespace Domain.Entities
 {
     public class CertificadoDepositoATermino : ServicioFinanciero
     {
-        const double VALORCONSIGNACIONINICIAL = 1000000;       
-        public double TasaEfectivaAnual { get; set; }
-        public DateTime FechaDeCreacion { get; set; }
+        const decimal VALORCONSIGNACIONINICIAL = 1000000;       
+        public decimal TasaEfectivaAnual { get; set; }
+        
         public int TerminoDefinido {get;set;}
 
-        public override string Consignar(double valor, string ciudad)
+        public override string Consignar(decimal valor, string ciudad)
         {
             if (CanConsignar(valor, ciudad).Count > 0) { throw new InvalidOperationException(); }
             return base.Consignar(valor, ciudad);
         }
-        public override IList<string> CanConsignar(double valor, string ciudad) {
+        public override IList<string> CanConsignar(decimal valor, string ciudad) {
             var errors = new List<string>();
             if (valor <= 0)
             {
@@ -39,15 +39,15 @@ namespace Domain.Entities
             }
             return errors;
         }
-        public override string EjecutarRetiro(double valor, string ciudad)
+        public override string Retirar(decimal valor, string ciudad)
         {
             if (CanRetirar(valor).Count != 0) { throw new InvalidCastException(); }
-            return this.Retirar(valor, ciudad);
+            return base.Retirar(valor, ciudad);
 
         }
-        public override IList<string> CanRetirar(double valor) {
+        public override IList<string> CanRetirar(decimal valor) {
             var errors = new List<string>();
-            TimeSpan time = DateTime.Now - FechaDeCreacion;
+            TimeSpan time = DateTime.Now - this.FechaCreacion;
             int diasTrascurridos = time.Days;
 
             if (valor <= 0)

@@ -13,32 +13,84 @@ namespace Domain.Test
         {
         }
 
+        //[TestCaseSource("DataSourceCuentaAhorro")]
+        //public void CaseTestCuentaAhorro(string numeroCuenta, string nombreCuenta, string ciudadCreacion, decimal saldo, DateTime FechaCreacion,decimal valor, string mensajeEsperado ) {
+        //    var cuentaAhorro = new CuentaAhorro();
+        //    cuentaAhorro.Numero = numeroCuenta;
+        //    cuentaAhorro.Nombre = nombreCuenta;
+        //    cuentaAhorro.CiudadDeCreacion = ciudadCreacion;
+        //    cuentaAhorro.Saldo = saldo;
+        //    cuentaAhorro.FechaCreacion = FechaCreacion;
+        //    var errores = cuentaAhorro.CanConsignar(valor, ciudadCreacion);
+//        string obtenido = "";
+//            if (errores.Count == 0)
+//            {
+//                obtenido = cuentaAhorro.Consignar(valor, ciudadCreacion);
+//            }
+//            else {
+//                if (errores.Contains(mensajeEsperado)) obtenido = mensajeEsperado;  
+//            }
+//Assert.AreEqual(mensajeEsperado, obtenido);
+        //}
+
+        //private static IEnumerable<TestCaseData> DataSourceCuentaAhorro() {
+        //    yield return new TestCaseData("0001", "Cuenta Ahorro 1", "Valledupar", 0, DateTime.Now, 50000, "Su nuevo saldo es " + 50000 + " m/c").SetName("ConsignacionInicialCorrecta").;
+        //    yield return new TestCaseData("0002","Cuenta Ahorro 2", "Valledupar", 0, DateTime.Now, -1000, "El valor a consignar es incorrecto").SetName("ValorConsignaciónNegativoCero");            
+        //    yield return new TestCaseData("0003", "Cuenta Ahorro 3", "Valledupar", 0, DateTime.Now, 40000, "El valor mínimo de la primera consignación debe ser de $50.000 mil pesos. Su nuevo saldo es $0 pesos").SetName("ConsignacionInicialIncorrecta");
+        //    yield return new TestCaseData("0004", "Cuenta Ahorro 4", "Valledupar", 0, DateTime.Now, 49950, "Su nuevo saldo es " + 79950 + " m/c").SetName("ConsignacionPosteriorInicialCorrecta");
+        //    yield return new TestCaseData("0005", "Cuenta Ahorro 5", "Bogota", 0, DateTime.Now, 49950, "Su nuevo saldo es " + 69950 + " m/c").SetName("ConsignacionPosteriorInicialCorrectaCiudad");           
+        //}
+        #region TestSeparadosConsignar
         [Test]
         public void ValorConsignaciónNegativoCero()
         {
-            var cuentaAhorro = new CuentaAhorro();         
+            const decimal VALOR = -10000;
+            const string CIUDAD = "Valledupar";
+            var cuentaAhorro = new CuentaAhorro();
             cuentaAhorro.Numero = "111";
             cuentaAhorro.Nombre = "Ahorro Ejemplo";
             cuentaAhorro.CiudadDeCreacion = "Valledupar";
-            cuentaAhorro.Saldo = 0;        
-            var respuesta = cuentaAhorro.CanConsignar(-10000, "Valledupar");
-            string obtenido = "";
+            cuentaAhorro.Saldo = 0;
+            var errores = cuentaAhorro.CanConsignar(VALOR, CIUDAD);
             string esperado = "El valor a consignar es incorrecto";
-            if (respuesta.Contains(esperado))  obtenido = esperado;
-           
-            Assert.AreEqual("El valor a consignar es incorrecto", obtenido);
+            string obtenido = "";
+            if (errores.Count == 0)
+            {
+                obtenido = cuentaAhorro.Consignar(VALOR, CIUDAD);
+            }
+            else
+            {
+                if (errores.Contains(esperado)) obtenido = esperado;
+            }          
+            if (errores.Contains(esperado)) obtenido = esperado;
+
+            Assert.AreEqual(esperado, obtenido);
         }
 
         [Test]
         public void ConsignacionInicialCorrecta()
         {
+            const decimal VALOR = 50000;
+            const string CIUDAD = "Valledupar";
             var cuentaAhorro = new CuentaAhorro();
             cuentaAhorro.Numero = "00001";
             cuentaAhorro.Nombre = "Ahorro Ejemplo";
             cuentaAhorro.CiudadDeCreacion = "Valledupar";
-            cuentaAhorro.Saldo = 0;                     
-            var respuesta = cuentaAhorro.Consignar(50000,"Valledupar");           
-            Assert.AreEqual("Su nuevo saldo es " + 50000 + " m/c", respuesta);
+            cuentaAhorro.Saldo = 0;
+            var errores = cuentaAhorro.CanConsignar(VALOR, CIUDAD);
+            string esperado = "Su nuevo saldo es " + 50000 + " m/c";
+            string obtenido = "";
+            if (errores.Count == 0)
+            {
+                obtenido = cuentaAhorro.Consignar(VALOR, CIUDAD);
+            }
+            else
+            {
+                if (errores.Contains(esperado)) obtenido = esperado;
+            }        
+            if (errores.Contains(esperado)) obtenido = esperado;
+
+            Assert.AreEqual(esperado, obtenido);         
 
         }
 
@@ -46,48 +98,92 @@ namespace Domain.Test
 
         public void ConsignacionInicialIncorrecta()
         {
+            const decimal VALOR = 40000;
+            const string CIUDAD = "Valledupar";
             var cuentaAhorro = new CuentaAhorro();
             cuentaAhorro.Numero = "111";
             cuentaAhorro.Nombre = "Ahorro Ejemplo";
             cuentaAhorro.CiudadDeCreacion = "Valledupar";
             cuentaAhorro.Saldo = 0;
-            string obtenido = "";
+            var errores = cuentaAhorro.CanConsignar(VALOR, CIUDAD);
             string esperado = "El valor mínimo de la primera consignación debe ser de $50.000 mil pesos. Su nuevo saldo es $0 pesos";
-            var respuesta = cuentaAhorro.CanConsignar(40000, "Valledupar");
-            if (respuesta.Contains(esperado)) obtenido = esperado;
-            Assert.AreEqual("El valor mínimo de la primera consignación debe ser de $50.000 mil pesos. Su nuevo saldo es $0 pesos", obtenido);
+            string obtenido = "";
+            if (errores.Count == 0)
+            {
+                obtenido = cuentaAhorro.Consignar(VALOR, CIUDAD);
+            }
+            else
+            {
+                if (errores.Contains(esperado)) obtenido = esperado;
+            }         
+            if (errores.Contains(esperado)) obtenido = esperado;
+
+            Assert.AreEqual(esperado, obtenido);          
+          
         }
 
         [Test]
 
         public void ConsignacionPosteriorInicialCorrecta()
         {
+            const decimal VALOR = 49950;
+            const string CIUDAD = "Valledupar";
             var cuentaAhorro = new CuentaAhorro();
             cuentaAhorro.Numero = "111";
             cuentaAhorro.Nombre = "Ahorro Ejemplo";
             cuentaAhorro.CiudadDeCreacion = "Valledupar";
             cuentaAhorro.Saldo = 0;
+
             cuentaAhorro.Consignar(50000, "Valledupar");
             cuentaAhorro.Retirar(20000, "Valledupar");
-            var respuesta = cuentaAhorro.Consignar(49950, "Valledupar");
-            Assert.AreEqual("Su nuevo saldo es " + 79950 + " m/c", respuesta);
+
+            var errores = cuentaAhorro.CanConsignar(VALOR, CIUDAD);
+            string esperado = "Su nuevo saldo es " + 79950 + " m/c";
+            string obtenido = "";
+            if (errores.Count == 0)
+            {
+                obtenido = cuentaAhorro.Consignar(VALOR, CIUDAD);
+            }
+            else
+            {
+                if (errores.Contains(esperado)) obtenido = esperado;
+            }
+            if (errores.Contains(esperado)) obtenido = esperado;
+
+            Assert.AreEqual(esperado, obtenido);
         }
 
         [Test]
 
         public void ConsignacionPosteriorInicialCorrectaCiudad()
         {
+            const decimal VALOR = 49950;
+            const string CIUDAD = "Bogota";
             var cuentaAhorro = new CuentaAhorro();
             cuentaAhorro.Numero = "111";
             cuentaAhorro.Nombre = "Ahorro Ejemplo";
             cuentaAhorro.CiudadDeCreacion = "Valledupar";
             cuentaAhorro.Saldo = 0;
+
             cuentaAhorro.Consignar(50000, "Valledupar");
             cuentaAhorro.Retirar(20000, "Valledupar");
-            var respuesta = cuentaAhorro.Consignar(49950, "Bogota");  
-            Assert.AreEqual("Su nuevo saldo es " + 69950 + " m/c", respuesta);
-        }
 
+            var errores = cuentaAhorro.CanConsignar(VALOR, CIUDAD);
+            string esperado = "Su nuevo saldo es " + 69950 + " m/c";
+            string obtenido = "";
+            if (errores.Count == 0)
+            {
+                obtenido = cuentaAhorro.Consignar(VALOR, CIUDAD);
+            }
+            else
+            {
+                if (errores.Contains(esperado)) obtenido = esperado;
+            }
+            if (errores.Contains(esperado)) obtenido = esperado;
+
+            Assert.AreEqual(esperado, obtenido);
+        }
+        #endregion
         [Test]
 
         public void ValorRetirarNegativo()
@@ -126,7 +222,7 @@ namespace Domain.Test
             cuentaAhorro.Nombre = "Ahorro Ejemplo";
             cuentaAhorro.CiudadDeCreacion = "Valledupar";
             cuentaAhorro.Saldo = 300000;
-            var respuesta = cuentaAhorro.EjecutarRetiro(100000, "Valledupar");
+            var respuesta = cuentaAhorro.Retirar(100000, "Valledupar");
             Assert.AreEqual("Su nuevo saldo es " + 200000 + " m/c", respuesta);
         }
 
@@ -138,11 +234,11 @@ namespace Domain.Test
             cuentaAhorro.Nombre = "Ahorro Ejemplo";
             cuentaAhorro.CiudadDeCreacion = "Valledupar";
             cuentaAhorro.Saldo = 300000;
-            cuentaAhorro.EjecutarRetiro(10000, "Valledupar");
-            cuentaAhorro.EjecutarRetiro(10000, "Valledupar");
-            cuentaAhorro.EjecutarRetiro(10000, "Valledupar");
-            cuentaAhorro.EjecutarRetiro(10000, "Valledupar");
-            var respuesta = cuentaAhorro.EjecutarRetiro(10000, "Valledupar");
+            cuentaAhorro.Retirar(10000, "Valledupar");
+            cuentaAhorro.Retirar(10000, "Valledupar");
+            cuentaAhorro.Retirar(10000, "Valledupar");
+            cuentaAhorro.Retirar(10000, "Valledupar");
+            var respuesta = cuentaAhorro.Retirar(10000, "Valledupar");
             Assert.AreEqual("Su nuevo saldo es " + 245000 + " m/c", respuesta);
         }
 
